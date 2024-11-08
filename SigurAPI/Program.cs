@@ -9,6 +9,7 @@ using System.Text.Encodings.Web;
 using System.Text;
 using Org.BouncyCastle.Utilities;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 
 
 JsonSerializerOptions jsonoptions = new JsonSerializerOptions
@@ -60,11 +61,32 @@ object GetPersTabid(string tabid = "хотп-00017")
         
         using (tcdbmainContext db = new tcdbmainContext())
         {
-            var p = db.Personals
-                .Where(p => p.Tabid == tabid && p.Status == "AVAILABLE")
-                .Select(p => new { p.Id, p.Name, p.Pos, p.ParentId, p.Codekey })
-                .ToList();
+            //var p = db.Personals
+            //    .Where(p => p.Tabid == tabid && p.Status == "AVAILABLE")
 
+            //    .Select(p => new { p.Id, p.Name, p.Pos, p.ParentId, p.Codekey })
+            //    .ToList();
+
+            //var p = db.Personals.Join(db.Personals,
+
+            //    pid => pid.ParentId,
+            //    id => id.Id,
+            //    (pid,id) => new { 
+            //        Name = pid.Name,
+            //        Otd = id.Name,
+            //        TabId = pid.Tabid
+            //    }
+
+            //    ).Where(a => a.TabId == tabid && a. == "AVAILABLE" );
+
+
+            var p = from u in db.Personals
+                    
+                    join o in db.Personals on u.ParentId equals o.Id into grouping
+                    from r in grouping.DefaultIfEmpty()
+                    where u.Tabid == tabid && u.Status == "AVAILABLE"
+                    select new { name = u.Name, otdel = r.Name, tabid = u.Tabid, pos = u.Pos }
+                        ;
 
             //string Codekeyb64 = Convert.ToBase64String(p[0].Codekey);
             //Console.WriteLine(Codekeyb64);
