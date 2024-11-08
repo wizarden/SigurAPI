@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SigurAPI.Models
+namespace SigurAPI.tcdbmain
 {
     public partial class Personal
     {
