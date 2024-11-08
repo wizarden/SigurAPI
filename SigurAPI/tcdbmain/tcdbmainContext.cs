@@ -34,6 +34,7 @@ namespace SigurAPI.tcdbmain
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseMySQL("server=192.168.1.164;Port=3305;user=root;password=392576;database=tc-db-main;CharSet=utf8;");
+                //optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug);
             }
         }
 

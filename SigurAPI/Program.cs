@@ -7,6 +7,8 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Encodings.Web;
 using System.Text;
+using Org.BouncyCastle.Utilities;
+using System.Net.Http.Json;
 
 
 JsonSerializerOptions jsonoptions = new JsonSerializerOptions
@@ -23,7 +25,8 @@ app.Map("/GetPersTabid/{tabid?}", GetPersTabid);
 
 ////app.Map("/users/{id}/{name?}", HandleRequest);
 ////app.Map("/users", () => "Users Page");
-app.Map("/", () => "Index Page");
+//app.Map("/", () => "Index Page");
+app.Map("/", GetPersTabid);
 
 app.Run();
 
@@ -50,17 +53,29 @@ object GetPers(int? id = 0)
 
 }
 
-object GetPersTabid(string tabid = "")
+object GetPersTabid(string tabid = "хотп-00017")
 {
     if (tabid != "")
     {
-        Console.WriteLine(  tabid);
         
         using (tcdbmainContext db = new tcdbmainContext())
         {
-            var p = db.Personals.Where(p => p.Tabid == tabid).ToList();
+            var p = db.Personals
+                .Where(p => p.Tabid == tabid && p.Status == "AVAILABLE")
+                .Select(p => new { p.Id, p.Name, p.Pos, p.ParentId, p.Codekey })
+                .ToList();
+
+
+            //string Codekeyb64 = Convert.ToBase64String(p[0].Codekey);
+            //Console.WriteLine(Codekeyb64);
+
+            //byte[] bytes = System.Convert.FromBase64String(Codekeyb64);
+            //Console.WriteLine(Convert.ToHexString(bytes));
 
             var json = JsonSerializer.Serialize(p, jsonoptions);
+            
+            //Console.WriteLine(json);
+
 
             return json;
         }
