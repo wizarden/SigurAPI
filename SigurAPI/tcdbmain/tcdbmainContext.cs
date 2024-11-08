@@ -33,8 +33,7 @@ namespace SigurAPI.tcdbmain
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseMySQL("server=192.168.1.164;Port=3305;user=root;password=392576;database=tc-db-main;");
+                optionsBuilder.UseMySQL("server=192.168.1.164;Port=3305;user=root;password=392576;database=tc-db-main;CharSet=utf8;");
             }
         }
 
@@ -1519,6 +1518,7 @@ namespace SigurAPI.tcdbmain
                     .HasColumnType("mediumtext")
                     .HasColumnName("TABID")
                     .HasDefaultValueSql("'NULL'");
+                    
 
                 entity.Property(e => e.TelegramChatid)
                     .HasMaxLength(1000)

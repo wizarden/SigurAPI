@@ -1,10 +1,25 @@
 using SigurAPI.tcdbmain;
+using SigurAPI.tcdblogs;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
+using System.Text;
+
+
+JsonSerializerOptions jsonoptions = new JsonSerializerOptions
+{
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    WriteIndented = true
+};
+
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-app.Map("/GetPers/{id}", GetPers);
+app.Map("/GetPers/{id:int?}", GetPers);
+app.Map("/GetPersTabid/{tabid?}", GetPersTabid);
 
 ////app.Map("/users/{id}/{name?}", HandleRequest);
 ////app.Map("/users", () => "Users Page");
@@ -18,20 +33,45 @@ app.Run();
 ////}
 
 
-string GetPers(string id)
+object GetPers(int? id = 0)
 {
-    //return $"User Id: {id}   User Name: {name}";
-
-    using (tcdbmainContext db = new tcdbmainContext())
+    if (id != 0)
     {
+        using (tcdbmainContext db = new tcdbmainContext())
+        {
+            var p = db.Personals.Where(p => p.Id == id).ToList();
 
-        var p = db.Personals.Where(p => p.Id == 113).ToList();
-
-        Console.WriteLine(p[0].Name);
+            var json = JsonSerializer.Serialize(p, jsonoptions);
+            Console.WriteLine(json);
+            return json;
+            if (p.Count > 0) return p[0].Name;
+        }
     }
-    return "";
+
+    return false;
 
 }
+
+object GetPersTabid(string tabid = "")
+{
+    if (tabid != "")
+    {
+        Console.WriteLine(  tabid);
+        
+        using (tcdbmainContext db = new tcdbmainContext())
+        {
+            var p = db.Personals.Where(p => p.Tabid == tabid).ToList();
+
+            var json = JsonSerializer.Serialize(p, jsonoptions);
+
+            return json;
+        }
+    }
+
+    return false;
+
+}
+
 
 
 
