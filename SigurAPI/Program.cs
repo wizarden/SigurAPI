@@ -40,11 +40,9 @@ object GetPers(int? id = 0)
         using (tcdbmainContext db = new tcdbmainContext())
         {
             var p = db.Personals.Where(p => p.Id == id).ToList();
-
             var json = JsonSerializer.Serialize(p, jsonoptions);
             Console.WriteLine(json);
             return json;
-            if (p.Count > 0) return p[0].Name;
         }
     }
 
